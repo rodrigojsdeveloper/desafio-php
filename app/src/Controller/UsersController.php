@@ -24,7 +24,7 @@ class UsersController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json([
+        $response = $this->json([
             'message' => 'Usuário criado com sucesso!',
             'user' => [
                 'id' => $user->getId(),
@@ -32,7 +32,9 @@ class UsersController extends AbstractController
                 'nis' => $user->getIns(),
             ],
         ], Response::HTTP_CREATED);
-    }
+
+        return $response;
+}
 
     #[Route('/users', name: 'list_users', methods: ['GET'])]
     public function listUsers(ManagerRegistry $doctrine): JsonResponse
