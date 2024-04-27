@@ -1,25 +1,24 @@
 'use client'
 
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { api } from '@/services/api'
-import { useState } from "react";
+import { UserContext } from "@/context/userContext";
 
 type FormValues = {
   name: string
 }
 
 export const Form = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { handleCreate, isLoadingCreate } = useContext(UserContext)
   const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const onSubmit = handleSubmit((data: FormValues) => {
-    setIsLoading(true);
 
-    api
-      .post('/users', data)
-      .then(() => reset())
-      .catch((error) => console.error(error))
-      .finally(() => setIsLoading(false))
+   try {
+    handleCreate(data, reset)
+   } catch(error) {
+    console.error('error', error)
+   }
   })
 
   return (
@@ -29,7 +28,7 @@ export const Form = () => {
         <label>Nome</label>
         <input required className="h-[40px] p-2 border border-solid border-gray-300 rounded-md" placeholder="Digite o nome" {...register('name')} />
       </div>
-      <button disabled={isLoading} type="submit" className="uppercase max-w-[180px] h-[40px] bg-slate-700 hover:bg-slate-600 duration-200 text-white rounded-md mx-auto px-3">{isLoading ? 'cadastrando...' : 'cadastrar'}</button>
+      <button disabled={isLoadingCreate} type="submit" className="uppercase max-w-[180px] h-[40px] bg-slate-700 hover:bg-slate-600 duration-200 text-white rounded-md mx-auto px-3">{isLoadingCreate ? 'cadastrando...' : 'cadastrar'}</button>
     </form>
   )
 };
